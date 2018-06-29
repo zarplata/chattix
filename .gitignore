@@ -1,0 +1,7 @@
+.out
+vendor/*
+chattix/
+pkg/
+src/
+*.tar.xz
+
