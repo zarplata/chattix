@@ -1,60 +1,77 @@
-.PHONY: all clean-all build cleand-deps deps ver
-
 DATE := $(shell git log -1 --format="%cd" --date=short | sed s/-//g)
 COUNT := $(shell git rev-list --count HEAD)
 COMMIT := $(shell git rev-parse --short HEAD)
 
-CHAT := $(shell echo $${CHAT:-mattermost})
+MESSENGER := $(shell echo $${MESSENGER:-mattermost})
 
 CONFIGUREDIR := /etc/chattix
+INSTALLPREFIX := /usr/local
+
 SERVICENAME := chattixd
-WEBHOOKNAME := zabbix-to-${CHAT}
+WEBHOOKNAME := zabbix-to-${MESSENGER}
 
 SERVICECONFIG := ${SERVICENAME}.conf
 WEBHOOKCONFIG := ${WEBHOOKNAME}.conf
 
 VERSION := "${DATE}.${COUNT}_${COMMIT}"
 
-LDFLAGS := "-X main.version=${VERSION} -X main.definedChat=${CHAT}"
+LDFLAGS := "-X main.version=${VERSION} -X main.definedMessenger=${MESSENGER}"
 
 SERVICESTATUS := $(shell systemctl status chattixd)
 
 
 default: all
 
+.PHONY: all
 all: clean-all deps build
 
+.PHONY: service
+service: clean-all deps build-service
+
+.PHONY: ver
 ver:
 	@echo ${VERSION}
 
+.PHONY: clean-all
 clean-all: clean-deps
 	@echo Clean builded binaries
 	rm -rf .out/
 	@echo Done
 
+.PHONY: clean-deps
 clean-deps:
 	@echo Clean dependencies
 	rm -rf vendor/*
 
+.PHONY: deps
 deps:
 	dep ensure
 
+.PHONY: build
 build: build-service build-hook
 
 
+.PHONY: build-service
 build-service:
 	@echo Build ${SERVICENAME}
 	go build -o .out/${SERVICENAME} -ldflags ${LDFLAGS} action_ack/*.go
 
+.PHONY: build-hook
 build-hook:
 	@echo Build ${WEBHOOKNAME}
 	go build -o .out/${WEBHOOKNAME} -ldflags ${LDFLAGS} webhook/*.go
 
+.PHONY: build-docker
+build-docker:
+	@echo Build dockerimage chattix
+	docker build . -t chattix
+
+.PHONY: install
 install: $(CONFIGUREDIR)
 	@echo Installing service 
-	cp .out/${SERVICENAME} /usr/bin/${SERVICENAME}
+	cp .out/${SERVICENAME} ${INSTALLPREFIX}/bin/${SERVICENAME}
 	@echo Installing webhook 
-	cp .out/${WEBHOOKNAME} /usr/bin/${WEBHOOKNAME}
+	cp .out/${WEBHOOKNAME} ${INSTALLPREFIX}/bin/${WEBHOOKNAME}
 	@echo Install example service config
 	cp action_ack/config.conf ${CONFIGUREDIR}/${SERVICECONFIG}
 	cp webhook/config.conf ${CONFIGUREDIR}/${WEBHOOKCONFIG}
@@ -66,6 +83,7 @@ install: $(CONFIGUREDIR)
 /etc/chattix:
 	test ! -d $(CONFIGUREDIR) && mkdir $(CONFIGUREDIR)
 
+.PHONY: uninstall
 uninstall:
 	@echo Stopping service
 	@echo ${status}
@@ -74,6 +92,6 @@ uninstall:
 	rm /lib/systemd/system/chattixd.service
 	systemctl daemon-reload
 	@echo Remove binaries
-	rm -rf /usr/bin/${SERVICENAME} /usr/bin/${WEBHOOKNAME}
+	rm -rf /usr/bin/${SERVICENAME} ${INSTALLPREFIX}/bin/${WEBHOOKNAME}
 	@echo Remove configuration
 	rm -rf ${CONFIGUREDIR}

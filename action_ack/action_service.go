@@ -14,40 +14,40 @@ import (
 const (
 	acknowledgedStatus  = "ACKNOWLEDGED"
 	usernamePlaceholder = "{{USERNAME}}"
-	chatSlack           = "slack"
-	chatMattermost      = "mattermost"
+	messengerSlack      = "slack"
+	messengerMattermost = "mattermost"
 )
 
 type actionACKService struct {
-	config   *config
-	gin      *gin.Engine
-	logger   *lorg.Log
-	chatType string
+	config        *config
+	gin           *gin.Engine
+	logger        *lorg.Log
+	messengerType string
 }
 
 func newActionACKService(
 	config *config,
 	logger *lorg.Log,
-	chatType string,
+	messengerType string,
 ) *actionACKService {
 
 	service := &actionACKService{
-		config:   config,
-		gin:      gin.Default(),
-		logger:   logger,
-		chatType: chatType,
+		config:        config,
+		gin:           gin.Default(),
+		logger:        logger,
+		messengerType: messengerType,
 	}
 
 	return service
 }
 
 func (service *actionACKService) setRoute() {
-	if service.chatType == chatSlack {
+	if service.messengerType == messengerSlack {
 		service.gin.POST("/", service.handleACKSlack)
 		service.gin.GET("/", service.handleACKSlack)
 	}
 
-	if service.chatType == chatMattermost {
+	if service.messengerType == messengerMattermost {
 		service.gin.POST("/", service.handleACKMattermost)
 		service.gin.GET("/", service.handleACKMattermost)
 	}
@@ -102,9 +102,11 @@ func (service *actionACKService) handleACKSlack(
 	// EventID which send by webhook binary as action value
 	eventID := payload.Actions[0].Value.(string)
 
+	messengerConfig := service.config.Messenger[service.messengerType]
+
 	username, err := fetchUserFromSlack(
-		service.config.Chat[service.chatType].ChatAPIURL,
-		service.config.Chat[service.chatType].ChatAPIToken,
+		messengerConfig.MessengerAPIURL,
+		messengerConfig.MessengerAPIToken,
 		payload.User.ID,
 	)
 
@@ -120,9 +122,10 @@ func (service *actionACKService) handleACKSlack(
 		return
 	}
 
-	newColor := service.config.Chat[service.chatType].AttachmentsColor
+	newColor := messengerConfig.AttachmentsColor
+
 	authorMessage := strings.Replace(
-		service.config.Chat[service.chatType].AuthorMessage,
+		messengerConfig.AuthorMessage,
 		usernamePlaceholder,
 		username,
 		-1,
@@ -150,7 +153,7 @@ func (service *actionACKService) handleACKSlack(
 
 	zabbixAttachment := &chat.SlackAttachment{
 		AuthorName: authorMessage,
-		AuthorIcon: service.config.Chat[service.chatType].AuthorImageURL,
+		AuthorIcon: messengerConfig.AuthorImageURL,
 		Color:      newColor,
 	}
 
@@ -206,9 +209,11 @@ func (service *actionACKService) handleACKMattermost(
 		return
 	}
 
+	messengerConfig := service.config.Messenger[service.messengerType]
+
 	username, err := fetchUserFromMattermost(
-		service.config.Chat[service.chatType].ChatAPIURL,
-		service.config.Chat[service.chatType].ChatAPIToken,
+		messengerConfig.MessengerAPIURL,
+		messengerConfig.MessengerAPIToken,
 		request.UserID,
 	)
 	if err != nil {
@@ -230,7 +235,7 @@ func (service *actionACKService) handleACKMattermost(
 	}
 
 	attachment := &chat.MattermostAttachment{
-		Color: service.config.Chat[service.chatType].AttachmentsColor,
+		Color: messengerConfig.AttachmentsColor,
 		Text:  request.Context.Message,
 		Title: acknowledgedStatus,
 	}
@@ -242,16 +247,16 @@ func (service *actionACKService) handleACKMattermost(
 	)
 
 	authorMessage := strings.Replace(
-		service.config.Chat[service.chatType].AuthorMessage,
+		messengerConfig.AuthorMessage,
 		usernamePlaceholder,
 		username,
 		-1,
 	)
 
 	attachmentZabbix := &chat.MattermostAttachment{
-		Color:      service.config.Chat[service.chatType].AttachmentsColor,
+		Color:      messengerConfig.AttachmentsColor,
 		AuthorName: authorMessage,
-		AuthorIcon: service.config.Chat[service.chatType].AuthorImageURL,
+		AuthorIcon: messengerConfig.AuthorImageURL,
 	}
 
 	mattermostMessage.Attachments = append(

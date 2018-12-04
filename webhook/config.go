@@ -6,16 +6,16 @@ import (
 )
 
 type config struct {
-	Chats         map[string]chatConfig     `toml:"chat"`
-	EventIDRegexp string                    `toml:"event_id_regexp"`
-	Severities    map[string]severityConfig `toml:"severities"`
-	Actions       map[string]actionConfig   `toml:"actions"`
+	Messengers    map[string]messengerConfig `toml:"messenger"`
+	EventIDRegexp string                     `toml:"event_id_regexp"`
+	Severities    map[string]severityConfig  `toml:"severities"`
+	Actions       map[string]actionConfig    `toml:"actions"`
 }
 
-type chatConfig struct {
-	ChatAPIURL   string `toml:"chat_api_url"`
-	ChatAPIToken string `toml:"chat_api_token"`
-	ChatUsername string `toml:"chat_username"`
+type messengerConfig struct {
+	MessengerAPIURL   string `toml:"messenger_api_url"`
+	MessengerAPIToken string `toml:"messenger_api_token"`
+	MessengerUsername string `toml:"messenger_username"`
 }
 
 type severityConfig struct {

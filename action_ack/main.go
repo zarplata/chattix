@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	docopt "github.com/docopt/docopt-go"
 	"github.com/kovetskiy/lorg"
 	"github.com/kovetskiy/toml"
@@ -8,10 +10,10 @@ import (
 )
 
 var (
-	logger      *lorg.Log
-	version     = "[manual build]"
-	definedChat = "mattermost"
-	usage       = "chattixd " + version + `
+	logger           *lorg.Log
+	version          = "[manual build]"
+	definedMessenger = "mattermost"
+	usage            = "chattixd " + version + ` for ` + definedMessenger + `
 
 Usage:
   chattixd [--config <path>]
@@ -38,21 +40,45 @@ func main() {
 		logger.Fatal(destiny.Format(err, "can't parse args"))
 	}
 
-	_, err = toml.DecodeFile(args["--config"].(string), conf)
-	if err != nil {
-		logger.Fatal(
-			destiny.Format(
-				err,
-				"can't read config file %s",
-				args["--config"].(string),
-			),
+	configFile := args["--config"].(string)
+
+	if _, err := os.Stat(configFile); !os.IsNotExist(err) {
+		_, err = toml.DecodeFile(configFile, conf)
+		if err != nil {
+			logger.Fatal(
+				destiny.Format(
+					err,
+					"can't read config file %s",
+					configFile,
+				),
+			)
+		}
+	} else {
+		logger.Infof(
+			"config file %s doesn't exist, use default configuration",
+			configFile,
 		)
+
+		_, err = toml.Decode(defaultConfiguration, conf)
+		if err != nil {
+			logger.Fatal(
+				destiny.Describe(
+					"default configuration", defaultConfiguration,
+				).Describe(
+					"error", err,
+				).Reason(
+					"can't parse default configuration",
+				),
+			)
+		}
 	}
+
+	parseEnvironmentVariables(conf)
 
 	actionService := newActionACKService(
 		conf,
 		logger,
-		definedChat,
+		definedMessenger,
 	)
 
 	actionService.run()

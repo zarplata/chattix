@@ -18,23 +18,23 @@ const (
 	defaultActionType = "button"
 	severityProblem   = "PROBLEM"
 
-	chatMattermost = "mattermost"
-	chatSlack      = "slack"
+	messengerMattermost = "mattermost"
+	messengerSlack      = "slack"
 )
 
 var (
-	logger        *lorg.Log
-	version       = "[manual build]"
-	definedChat   = chatMattermost
-	configPath    = "/etc/chattix/zabbix-to-" + definedChat + ".conf"
-	eventIDExists = false
-	usage         = "zabbix-to-" + definedChat + " " + version + `
+	logger           *lorg.Log
+	version          = "[manual build]"
+	definedMessenger = messengerMattermost
+	configPath       = "/etc/chattix/zabbix-to-" + definedMessenger + ".conf"
+	eventIDExists    = false
+	usage            = "zabbix-to-" + definedMessenger + " " + version + `
 
 Usage:
-  zabbix-to-` + definedChat + `  <channel> <severity> <message>
+  zabbix-to-` + definedMessenger + `  <channel> <severity> <message>
 
 Options:
-  <channel>   Channel in ` + definedChat + ` where message will be placed.  
+  <channel>   Channel in ` + definedMessenger + ` where message will be placed.  
                                                                    
   <severity>  Severity of event. Possible values are: OK or PROBLEM
                                                                    
@@ -44,8 +44,8 @@ Options:
 
 func main() {
 	chatChooser := map[string]func() chat.Message{
-		chatMattermost: chat.NewMattermostMessage,
-		chatSlack:      chat.NewSlackMessage,
+		messengerMattermost: chat.NewMattermostMessage,
+		messengerSlack:      chat.NewSlackMessage,
 	}
 
 	destiny := karma.Describe(
@@ -53,7 +53,7 @@ func main() {
 	).Describe(
 		"version", version,
 	).Describe(
-		"chat type", definedChat,
+		"chat type", definedMessenger,
 	)
 
 	logger = lorg.NewLog()
@@ -103,14 +103,14 @@ func main() {
 		eventIDExists = true
 	}
 
-	request := chatChooser[definedChat]()
+	request := chatChooser[definedMessenger]()
 
 	icon := conf.getIconURL(severity)
 	color := conf.getColor(severity)
 
 	request.SetChannel(channel)
 	request.SetIcon(icon)
-	request.SetUsername(conf.Chats[definedChat].ChatUsername)
+	request.SetUsername(conf.Messengers[definedMessenger].MessengerUsername)
 
 	attachment := request.CreateAttachment(message, color)
 	attachment.SetTitle(severity)
@@ -124,8 +124,8 @@ func main() {
 
 	if severity != severityProblem {
 		err = request.SendRequest(
-			conf.Chats[definedChat].ChatAPIURL,
-			conf.Chats[definedChat].ChatAPIToken,
+			conf.Messengers[definedMessenger].MessengerAPIURL,
+			conf.Messengers[definedMessenger].MessengerAPIToken,
 		)
 
 		if err != nil {
@@ -141,7 +141,7 @@ func main() {
 		return
 	}
 
-	if definedChat == chatMattermost {
+	if definedMessenger == messengerMattermost {
 
 		actionContext := context.ContextActionACK{
 			EventID:  eventID,
@@ -149,7 +149,7 @@ func main() {
 			Severity: severity,
 			Message:  strings.Replace(message, fullEventIDMessage, "", -1),
 			Channel:  channel,
-			Username: conf.Chats[chatMattermost].ChatUsername,
+			Username: conf.Messengers[messengerMattermost].MessengerUsername,
 			IconURL:  icon,
 		}
 
@@ -161,7 +161,7 @@ func main() {
 		)
 	}
 
-	if definedChat == chatSlack {
+	if definedMessenger == messengerSlack {
 		attachment.AddAction(
 			defaultAction,
 			defaultAction,
@@ -171,8 +171,8 @@ func main() {
 	}
 
 	err = request.SendRequest(
-		conf.Chats[definedChat].ChatAPIURL,
-		conf.Chats[definedChat].ChatAPIToken,
+		conf.Messengers[definedMessenger].MessengerAPIURL,
+		conf.Messengers[definedMessenger].MessengerAPIToken,
 	)
 	if err != nil {
 		logger.Fatal(
