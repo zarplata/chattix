@@ -2,96 +2,144 @@
 
 
 [[projects]]
+  digest = "1:abaaa7489a2f0f3afb2adc8ea1a282a5bd52350b87b26da220c94fc778d6d63b"
   name = "github.com/docopt/docopt-go"
   packages = ["."]
+  pruneopts = "UT"
   revision = "784ddc588536785e7299f7272f39101f7faccc3f"
   version = "0.6.2"
 
 [[projects]]
+  digest = "1:ca82a3b99694824c627573c2a76d0e49719b4a9c02d1d85a2ac91f1c1f52ab9b"
   name = "github.com/fatih/structs"
   packages = ["."]
+  pruneopts = "UT"
   revision = "a720dfa8df582c51dee1b36feabb906bde1588bd"
   version = "v1.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:36fe9527deed01d2a317617e59304eb2c4ce9f8a24115bcc5c2e37b3aee5bae4"
   name = "github.com/gin-contrib/sse"
   packages = ["."]
+  pruneopts = "UT"
   revision = "22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae"
 
 [[projects]]
+  digest = "1:489e108f21464371ebf9cb5c30b1eceb07c6dd772dff073919267493dd9d04ea"
   name = "github.com/gin-gonic/gin"
   packages = [
     ".",
     "binding",
-    "render"
+    "render",
   ]
+  pruneopts = "UT"
   revision = "d459835d2b077e44f7c9b453505ee29881d5d12d"
   version = "v1.2"
 
 [[projects]]
+  digest = "1:15042ad3498153684d09f393bbaec6b216c8eec6d61f63dff711de7d64ed8861"
   name = "github.com/golang/protobuf"
   packages = ["proto"]
+  pruneopts = "UT"
   revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
   version = "v1.1.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:40c759cd4669248ae4f4f0c19e047bbe03cd9cffccc13920ddef7ec18beb9e94"
   name = "github.com/kovetskiy/lorg"
   packages = ["."]
+  pruneopts = "UT"
   revision = "05d42d7f98ba6d0672023d7aef973bcdaa2d2cd2"
 
 [[projects]]
+  digest = "1:357d8cbf8793bd20ad651071b24389f7933190501c43196f805fe2339a525f0f"
   name = "github.com/kovetskiy/toml"
   packages = ["."]
+  pruneopts = "UT"
   revision = "bbd5bb678321a0d6e58f1099321dfa73391c1b6f"
   version = "v0.2.0"
 
 [[projects]]
+  digest = "1:d4d17353dbd05cb52a2a52b7fe1771883b682806f68db442b436294926bbfafb"
   name = "github.com/mattn/go-isatty"
   packages = ["."]
+  pruneopts = "UT"
   revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
   version = "v0.0.3"
 
 [[projects]]
   branch = "master"
+  digest = "1:585f9dbf3552a486e55fcdefb1e0755f98115d42f79d878791e02fbb2046961c"
   name = "github.com/reconquest/karma-go"
   packages = ["."]
+  pruneopts = "UT"
   revision = "cf3af19bec91f855893a269a9dfd510ac8380d69"
 
 [[projects]]
+  digest = "1:03aa6e485e528acb119fb32901cf99582c380225fc7d5a02758e08b180cb56c3"
   name = "github.com/ugorji/go"
   packages = ["codec"]
+  pruneopts = "UT"
   revision = "b4c50a2b199d93b13dc15e78929cfb23bfdf21ab"
   version = "v1.1.1"
 
 [[projects]]
+  branch = "wip"
+  digest = "1:92882794e05167f996aebfa939d0c8f870e3b6c23f66ba3e5f6752c1197b2293"
+  name = "github.com/zarplata/chattix"
+  packages = [
+    "chat",
+    "context",
+  ]
+  pruneopts = "UT"
+  revision = "6b31c500ef42c5bcd8f80308327c9cb38f0ee05a"
+
+[[projects]]
   branch = "master"
+  digest = "1:48db9a1a4d7b9ad4ed12257b921637b437d8d092cc1cb505736ac1ddc356df2d"
   name = "github.com/zazab/zhash"
   packages = ["."]
+  pruneopts = "UT"
   revision = "ad45b89afe7af57319ca32f174e4dabeb00c44e4"
 
 [[projects]]
   branch = "master"
+  digest = "1:a3a6de39e290e48a117738abd07843fce514b32ba887044c1dd123030a60c108"
   name = "golang.org/x/sys"
   packages = ["unix"]
+  pruneopts = "UT"
   revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
 
 [[projects]]
+  digest = "1:cbc72c4c4886a918d6ab4b95e347ffe259846260f99ebdd8a198c2331cf2b2e9"
   name = "gopkg.in/go-playground/validator.v8"
   packages = ["."]
+  pruneopts = "UT"
   revision = "5f1438d3fca68893a817e4a66806cea46a9e4ebf"
   version = "v8.18.2"
 
 [[projects]]
+  digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = "UT"
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
   version = "v2.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "862059bbc947e3005deca920b45f35fd4cbfcaa9eb83ec0ec935062675f8a335"
+  input-imports = [
+    "github.com/docopt/docopt-go",
+    "github.com/fatih/structs",
+    "github.com/gin-gonic/gin",
+    "github.com/kovetskiy/lorg",
+    "github.com/kovetskiy/toml",
+    "github.com/reconquest/karma-go",
+    "github.com/zarplata/chattix/chat",
+    "github.com/zarplata/chattix/context",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
