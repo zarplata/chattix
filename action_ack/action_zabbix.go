@@ -129,11 +129,6 @@ func acknowledgeZabbixEvent(
 	majorZabbixVersion := strings.Split(zabbixVersion, ".")[0]
 
 	switch majorZabbixVersion {
-
-	case "4":
-		//https://www.zabbix.com/documentation/4.0/manual/api/reference/event/acknowledge
-		params["action"] = 6
-
 	case "3":
 		//https://www.zabbix.com/documentation/3.4/manual/api/reference/event/acknowledge
 		params["action"] = 1
@@ -141,6 +136,10 @@ func acknowledgeZabbixEvent(
 		//default:
 		//https://www.zabbix.com/documentation/1.8/api/event/acknowledge
 		//https://www.zabbix.com/documentation/2.0/manual/appendix/api/event/acknowledge
+	default:
+		//https://www.zabbix.com/documentation/4.0/manual/api/reference/event/acknowledge
+		//https://www.zabbix.com/documentation/5.0/manual/api/reference/event/acknowledge
+		params["action"] = 6
 	}
 
 	payload := zabbixRequestPayload{

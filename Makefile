@@ -54,12 +54,12 @@ build: build-service build-hook
 .PHONY: build-service
 build-service:
 	@echo Build ${SERVICENAME}
-	go build -o .out/${SERVICENAME} -ldflags ${LDFLAGS} action_ack/*.go
+	CGO_ENABLED=0 go build -o .out/${SERVICENAME} -ldflags ${LDFLAGS} action_ack/*.go
 
 .PHONY: build-hook
 build-hook:
 	@echo Build ${WEBHOOKNAME}
-	go build -o .out/${WEBHOOKNAME} -ldflags ${LDFLAGS} webhook/*.go
+	CGO_ENABLED=0 go build -o .out/${WEBHOOKNAME} -ldflags ${LDFLAGS} webhook/*.go
 
 .PHONY: build-docker
 build-docker:
