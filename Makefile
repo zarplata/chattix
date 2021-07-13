@@ -23,7 +23,7 @@ SERVICESTATUS := $(shell systemctl status chattixd)
 default: all
 
 .PHONY: all
-all: clean-all deps build
+all: clean-all build
 
 .PHONY: service
 service: clean-all deps build-service
@@ -33,19 +33,10 @@ ver:
 	@echo ${VERSION}
 
 .PHONY: clean-all
-clean-all: clean-deps
+clean-all:
 	@echo Clean builded binaries
 	rm -rf .out/
 	@echo Done
-
-.PHONY: clean-deps
-clean-deps:
-	@echo Clean dependencies
-	rm -rf vendor/*
-
-.PHONY: deps
-deps:
-	dep ensure
 
 .PHONY: build
 build: build-service build-hook
