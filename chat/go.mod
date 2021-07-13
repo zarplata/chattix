@@ -1,3 +1,3 @@
-module github.com/zarplata/chattix/chat
+module chat
 
 go 1.16
