@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	karma "github.com/reconquest/karma-go"
-	"github.com/zarplata/chattix/chat"
+	chat "github.com/zarplata/chattix/chat"
 )
 
 type slackActionRequest struct {
